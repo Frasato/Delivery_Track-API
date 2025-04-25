@@ -10,6 +10,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String name;
+    private String email;
     private String password;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
@@ -18,10 +19,12 @@ public class User {
     public User() {
     }
 
-    public User(String id, String name, String password) {
+    public User(String id, String name, String email, String password, Delivery delivery) {
         this.id = id;
         this.name = name;
+        this.email = email;
         this.password = password;
+        this.delivery = delivery;
     }
 
     public String getId() {
@@ -40,11 +43,27 @@ public class User {
         this.name = name;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Delivery getDelivery() {
+        return delivery;
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
     }
 }
