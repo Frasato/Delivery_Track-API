@@ -42,7 +42,7 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         }catch(JWTVerificationException jwtVerification){
-            throw new RuntimeException("ERROR: token not valid: " + jwtVerification);
+            throw new RuntimeException("ERROR: token not valid");
         }
     }
 
