@@ -11,6 +11,7 @@ public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+    private int orders;
     private double lat;
     private double lng;
     private Instant init;
@@ -23,12 +24,14 @@ public class Delivery {
     public Delivery() {
     }
 
-    public Delivery(String id, double lat, double lng, Instant init, Instant finish) {
+    public Delivery(String id, int orders, double lat, double lng, Instant init, Instant finish, User userId) {
         this.id = id;
+        this.orders = orders;
         this.lat = lat;
         this.lng = lng;
         this.init = init;
         this.finish = finish;
+        this.userId = userId;
     }
 
     public String getId() {
@@ -37,6 +40,22 @@ public class Delivery {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getOrders() {
+        return orders;
+    }
+
+    public void setOrders(int orders) {
+        this.orders = orders;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 
     public double getLat() {
