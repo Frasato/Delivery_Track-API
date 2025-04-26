@@ -2,6 +2,8 @@ package com.delivery_track.api.models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -13,13 +15,13 @@ public class User {
     private String email;
     private String password;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    private Delivery delivery;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Delivery> delivery;
 
     public User() {
     }
 
-    public User(String id, String name, String email, String password, Delivery delivery) {
+    public User(String id, String name, String email, String password, List<Delivery> delivery) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -59,11 +61,11 @@ public class User {
         this.password = password;
     }
 
-    public Delivery getDelivery() {
+    public List<Delivery> getDelivery() {
         return delivery;
     }
 
-    public void setDelivery(Delivery delivery) {
+    public void setDelivery(List<Delivery> delivery) {
         this.delivery = delivery;
     }
 }
