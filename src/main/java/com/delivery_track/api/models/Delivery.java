@@ -19,19 +19,19 @@ public class Delivery {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     public Delivery() {
     }
 
-    public Delivery(String id, int orders, double lat, double lng, Instant init, Instant finish, User userId) {
+    public Delivery(String id, int orders, double lat, double lng, Instant init, Instant finish, User user) {
         this.id = id;
         this.orders = orders;
         this.lat = lat;
         this.lng = lng;
         this.init = init;
         this.finish = finish;
-        this.userId = userId;
+        this.user = user;
     }
 
     public String getId() {
@@ -50,12 +50,12 @@ public class Delivery {
         this.orders = orders;
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User userId) {
+        this.user = userId;
     }
 
     public double getLat() {
