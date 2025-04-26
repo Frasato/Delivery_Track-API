@@ -18,6 +18,11 @@ public class DeliveryController {
     @Autowired
     private DeliveryService deliveryService;
 
+    @PostMapping("/init/{id}")
+    public ResponseEntity<?> initDelivery(@PathVariable String id){
+        return deliveryService.initDelivery(id);
+    }
+
     @GetMapping("/public/{id}")
     public ResponseEntity<LocationDto> getDeliveryLocation(@PathVariable String id){
         Delivery delivery = deliveryRepository.findById(id).orElseThrow(() -> new RuntimeException("ERROR"));
