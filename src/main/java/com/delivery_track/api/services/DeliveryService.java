@@ -1,15 +1,24 @@
 package com.delivery_track.api.services;
 
 import com.delivery_track.api.models.Delivery;
+import com.delivery_track.api.models.User;
 import com.delivery_track.api.repositories.DeliveryRepository;
+import com.delivery_track.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.core.RepositoryCreationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.Optional;
 
 @Service
 public class DeliveryService {
 
     @Autowired
     private DeliveryRepository deliveryRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public void updateLocation(String deliveryId, double lat, double lng){
         Delivery delivery = deliveryRepository.findById(deliveryId)
@@ -17,6 +26,32 @@ public class DeliveryService {
         delivery.setLat(lat);
         delivery.setLng(lng);
         deliveryRepository.save(delivery);
+    }
+
+    public ResponseEntity<?> finishDelivery(String deliveryId, String userId){
+        try{
+            Optional<User> findedUser = userRepository.findById(userId);
+            Optional<Delivery> findedDelivery = deliveryRepository.findById(deliveryId);
+
+            if(findedDelivery.isEmpty() || findedUser.isEmpty()){
+                return ResponseEntity.badRequest().body("ERROR: Delivery or User doesn't exist!");
+            }
+
+            User user = findedUser.get();
+            Delivery delivery = findedDelivery.get();
+
+            delivery.setFinish(Instant.now());
+            user.setDelivery(delivery);
+
+            deliveryRepository.save(delivery);
+            userRepository.save(user);
+
+            return ResponseEntity.status(201).build();
+
+        }catch(Exception e){
+            return ResponseEntity.internalServerError().body("ERROR: " + e);
+        }
+
     }
 
 }
