@@ -20,6 +20,27 @@ public class DeliveryService {
     @Autowired
     private UserRepository userRepository;
 
+    public ResponseEntity<?> initDelivery(String userId){
+        try{
+            Optional<User> findeduser = userRepository.findById(userId);
+
+            if(findeduser.isEmpty()){
+                return ResponseEntity.badRequest().body("ERROR: User doesn't exist!");
+            }
+
+            Delivery delivery = new Delivery();
+            delivery.setLat(0);
+            delivery.setLng(0);
+            delivery.setInit(Instant.now());
+            delivery.setUser(findeduser.get());
+
+            return ResponseEntity.status(201).build();
+
+        }catch(Exception e){
+            return ResponseEntity.internalServerError().body("ERROR: " + e);
+        }
+    }
+
     public void updateLocation(String deliveryId, double lat, double lng){
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new RuntimeException("Delivery not found!"));
@@ -41,7 +62,7 @@ public class DeliveryService {
             Delivery delivery = findedDelivery.get();
 
             delivery.setFinish(Instant.now());
-            user.setDelivery(delivery);
+            delivery.setUser(user);
 
             deliveryRepository.save(delivery);
             userRepository.save(user);
