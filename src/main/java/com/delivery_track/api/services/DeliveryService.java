@@ -5,11 +5,12 @@ import com.delivery_track.api.models.User;
 import com.delivery_track.api.repositories.DeliveryRepository;
 import com.delivery_track.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.core.RepositoryCreationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -34,7 +35,13 @@ public class DeliveryService {
             delivery.setInit(Instant.now());
             delivery.setUser(findeduser.get());
 
-            return ResponseEntity.status(201).build();
+            Delivery savedDelivery = deliveryRepository.save(delivery);
+            String link = "https://localhost:8080/api/delivery/track/public/" + savedDelivery.getId();
+
+            Map<String, String> response = new HashMap<>();
+            response.put("link", link);
+
+            return ResponseEntity.status(201).body(response);
 
         }catch(Exception e){
             return ResponseEntity.internalServerError().body("ERROR: " + e);
@@ -58,16 +65,13 @@ public class DeliveryService {
                 return ResponseEntity.badRequest().body("ERROR: Delivery or User doesn't exist!");
             }
 
-            User user = findedUser.get();
             Delivery delivery = findedDelivery.get();
-
             delivery.setFinish(Instant.now());
-            delivery.setUser(user);
-
             deliveryRepository.save(delivery);
-            userRepository.save(user);
 
-            return ResponseEntity.status(201).build();
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Delivery finished successfully.");
+            return ResponseEntity.status(201).body(response);
 
         }catch(Exception e){
             return ResponseEntity.internalServerError().body("ERROR: " + e);
