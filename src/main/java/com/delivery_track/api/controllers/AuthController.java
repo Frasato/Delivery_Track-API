@@ -1,6 +1,7 @@
 package com.delivery_track.api.controllers;
 
 import com.delivery_track.api.dtos.AuthDto;
+import com.delivery_track.api.dtos.LoginDto;
 import com.delivery_track.api.dtos.ResponseAuthDto;
 import com.delivery_track.api.models.User;
 import com.delivery_track.api.repositories.UserRepository;
@@ -8,15 +9,13 @@ import com.delivery_track.api.security.config.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/delivery/track")
+@CrossOrigin("*")
 public class AuthController {
 
     @Autowired
@@ -39,12 +38,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> userLogin(@RequestBody AuthDto authDto){
-        Optional<User> findedUser = userRepository.findUserByEmail(authDto.email());
+    public ResponseEntity<?> userLogin(@RequestBody LoginDto loginDto){
+        Optional<User> findedUser = userRepository.findUserByEmail(loginDto.email());
+
+        if(findedUser.isEmpty()) return ResponseEntity.badRequest().body("Error: user not found!");
 
         User user = findedUser.get();
 
-        if(passwordEncoder.matches(authDto.password(), user.getPassword())){
+        if(passwordEncoder.matches(loginDto.password(), user.getPassword())){
             String token = tokenService.generateToken(user);
             return ResponseEntity.ok(new ResponseAuthDto(user.getName(), user.getEmail(), token));
         }
