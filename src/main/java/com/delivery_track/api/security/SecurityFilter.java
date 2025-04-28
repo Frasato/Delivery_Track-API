@@ -30,13 +30,19 @@ public class SecurityFilter extends OncePerRequestFilter {
             throws ServletException, IOException
     {
         var token = this.recoverToken(request);
-        var login =tokenService.validateToken(token);
+
+        if(token == null){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        var login = tokenService.validateToken(token);
 
         if(login != null){
             User user = userRepository.findUserByEmail(login)
                     .orElseThrow(() -> new RuntimeException("ERROR: can't find user!"));
             var authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
-            var authentication = new UsernamePasswordAuthenticationToken(token, null, authorities);
+            var authentication = new UsernamePasswordAuthenticationToken(login, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
@@ -46,7 +52,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     public String recoverToken(HttpServletRequest request){
         var authHeader = request.getHeader("Authorization");
         if(authHeader == null) return null;
-        return authHeader.replace("Bearer", "");
+        return authHeader.replace("Bearer ", "").trim();
     }
 
 }
