@@ -1,5 +1,6 @@
 package com.delivery_track.api.services;
 
+import com.delivery_track.api.dtos.ResponseDeliveryDto;
 import com.delivery_track.api.models.Delivery;
 import com.delivery_track.api.models.User;
 import com.delivery_track.api.repositories.DeliveryRepository;
@@ -41,7 +42,7 @@ public class DeliveryService {
             Map<String, String> response = new HashMap<>();
             response.put("link", link);
 
-            return ResponseEntity.status(201).body(response);
+            return ResponseEntity.status(201).body(new ResponseDeliveryDto(delivery.getId(), userId, response));
 
         }catch(Exception e){
             return ResponseEntity.internalServerError().body("ERROR: " + e);
