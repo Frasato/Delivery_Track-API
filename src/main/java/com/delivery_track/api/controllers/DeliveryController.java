@@ -8,6 +8,7 @@ import com.delivery_track.api.services.DeliveryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,7 @@ public class DeliveryController {
             @ApiResponse(responseCode = "400", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<?> initDelivery(@PathVariable String id){
         return deliveryService.initDelivery(id);
     }
@@ -51,6 +53,7 @@ public class DeliveryController {
             @ApiResponse(responseCode = "400", description = "User not found or Delivery"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<?> finishDelivery(@RequestBody FinishDeliveryDto finish){
         return deliveryService.finishDelivery(finish.deliveryId(), finish.userId());
     }
