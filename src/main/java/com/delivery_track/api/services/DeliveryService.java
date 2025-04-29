@@ -27,7 +27,7 @@ public class DeliveryService {
             Optional<User> findeduser = userRepository.findById(userId);
 
             if(findeduser.isEmpty()){
-                return ResponseEntity.badRequest().body("ERROR: User doesn't exist!");
+                return ResponseEntity.status(400).body("ERROR: User doesn't exist!");
             }
 
             Delivery delivery = new Delivery();
@@ -63,7 +63,7 @@ public class DeliveryService {
             Optional<Delivery> findedDelivery = deliveryRepository.findById(deliveryId);
 
             if(findedDelivery.isEmpty() || findedUser.isEmpty()){
-                return ResponseEntity.badRequest().body("ERROR: Delivery or User doesn't exist!");
+                return ResponseEntity.status(400).body("ERROR: Delivery or User doesn't exist!");
             }
 
             Delivery delivery = findedDelivery.get();
@@ -75,7 +75,7 @@ public class DeliveryService {
             return ResponseEntity.status(201).body(response);
 
         }catch(Exception e){
-            return ResponseEntity.internalServerError().body("ERROR: " + e);
+            return ResponseEntity.status(500).body("ERROR: " + e);
         }
 
     }

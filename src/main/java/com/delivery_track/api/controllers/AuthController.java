@@ -27,6 +27,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> userRegister(@RequestBody AuthDto authDto){
+        if(authDto.email().isEmpty() || authDto.name().isEmpty() || authDto.password().isEmpty()){
+            return ResponseEntity.status(400).body("Error: The field name, email or password should be not empty!");
+        }
         User user = new User();
 
         user.setName(authDto.name());
@@ -34,23 +37,23 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(authDto.password()));
 
         userRepository.save(user);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.status(201).body(user);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> userLogin(@RequestBody LoginDto loginDto){
         Optional<User> findedUser = userRepository.findUserByEmail(loginDto.email());
 
-        if(findedUser.isEmpty()) return ResponseEntity.badRequest().body("Error: user not found!");
+        if(findedUser.isEmpty()) return ResponseEntity.status(400).body("Error: user not found!");
 
         User user = findedUser.get();
 
         if(passwordEncoder.matches(loginDto.password(), user.getPassword())){
             String token = tokenService.generateToken(user);
-            return ResponseEntity.ok(new ResponseAuthDto(user.getId(), user.getName(), user.getEmail(), token));
+            return ResponseEntity.status(200).body(new ResponseAuthDto(user.getId(), user.getName(), user.getEmail(), token));
         }
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(400).build();
     }
 
 }
