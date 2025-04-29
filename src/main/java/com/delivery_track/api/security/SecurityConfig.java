@@ -32,6 +32,7 @@ public class SecurityConfig {
                 )).authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/delivery/track/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/delivery/track/login").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
