@@ -49,14 +49,6 @@ public class DeliveryService {
         }
     }
 
-    public void updateLocation(String deliveryId, double lat, double lng){
-        Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new RuntimeException("Delivery not found!"));
-        delivery.setLat(lat);
-        delivery.setLng(lng);
-        deliveryRepository.save(delivery);
-    }
-
     public ResponseEntity<?> finishDelivery(String deliveryId, String userId){
         try{
             Optional<User> findedUser = userRepository.findById(userId);
