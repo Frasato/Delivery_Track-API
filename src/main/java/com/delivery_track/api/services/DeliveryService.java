@@ -13,20 +13,25 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class DeliveryService {
 
+    private static final Logger logger = LoggerFactory.getLogger(DeliveryService.class);
     @Autowired
     private DeliveryRepository deliveryRepository;
     @Autowired
     private UserRepository userRepository;
 
     public ResponseEntity<?> initDelivery(String userId){
+        logger.info("Starting the delivery for user {}", userId);
         try{
             Optional<User> findeduser = userRepository.findById(userId);
 
             if(findeduser.isEmpty()){
+                logger.warn("User with id {} not found", userId);
                 return ResponseEntity.status(400).body("ERROR: User doesn't exist!");
             }
 
@@ -39,22 +44,27 @@ public class DeliveryService {
             Delivery savedDelivery = deliveryRepository.save(delivery);
             String link = "https://localhost:8080/api/delivery/track/public/" + savedDelivery.getId();
 
+            logger.info("Delivery start success to user {} and delivery {}", userId, savedDelivery.getId());
+
             Map<String, String> response = new HashMap<>();
             response.put("link", link);
 
             return ResponseEntity.status(201).body(new ResponseDeliveryDto(delivery.getId(), userId, response));
 
         }catch(Exception e){
+            logger.error("Error on start delivery for user {}: {}", userId, e.getMessage());
             return ResponseEntity.internalServerError().body("ERROR: " + e);
         }
     }
 
     public ResponseEntity<?> finishDelivery(String deliveryId, String userId){
+        logger.info("Finishing the delivery {}", deliveryId);
         try{
             Optional<User> findedUser = userRepository.findById(userId);
             Optional<Delivery> findedDelivery = deliveryRepository.findById(deliveryId);
 
             if(findedDelivery.isEmpty() || findedUser.isEmpty()){
+                logger.warn("User {} and Delivery {} not found", userId, deliveryId);
                 return ResponseEntity.status(400).body("ERROR: Delivery or User doesn't exist!");
             }
 
@@ -62,11 +72,14 @@ public class DeliveryService {
             delivery.setFinish(Instant.now());
             deliveryRepository.save(delivery);
 
+            logger.info("Delivery {} finished", deliveryId);
+
             Map<String, String> response = new HashMap<>();
             response.put("message", "Delivery finished successfully.");
             return ResponseEntity.status(201).body(response);
 
         }catch(Exception e){
+            logger.error("Error on finishing the delivery {} - {}", deliveryId, e.getMessage());
             return ResponseEntity.status(500).body("ERROR: " + e);
         }
 
