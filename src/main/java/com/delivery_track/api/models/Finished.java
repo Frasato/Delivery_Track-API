@@ -14,17 +14,17 @@ public class Finished {
     private String name;
     private String startTime;
     private Instant finishTime;
-    private Integer order;
+    private int orders;
 
     public Finished() {
     }
 
-    public Finished(String id, String name, String startTime, Instant finishTime, Integer order) {
+    public Finished(String id, String name, String startTime, Instant finishTime, Integer orders) {
         this.id = id;
         this.name = name;
         this.startTime = startTime;
         this.finishTime = finishTime;
-        this.order = order;
+        this.orders = orders;
     }
 
     public String getId() {
@@ -59,11 +59,11 @@ public class Finished {
         this.finishTime = finishTime;
     }
 
-    public Integer getOrder() {
-        return order;
+    public Integer getOrders() {
+        return orders;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setOrders(Integer orders) {
+        this.orders = orders;
     }
 }

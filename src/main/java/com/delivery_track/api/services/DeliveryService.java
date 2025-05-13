@@ -79,7 +79,7 @@ public class DeliveryService {
             finishedDelivery.setStartTime(delivery.getInit().toString());
             finishedDelivery.setName(findedUser.get().getName());
             finishedDelivery.setFinishTime(Instant.now());
-            finishedDelivery.setOrder(delivery.getOrders());
+            finishedDelivery.setOrders(delivery.getOrders());
 
             deliveryRepository.delete(delivery);
             finishedRepository.save(finishedDelivery);
