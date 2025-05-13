@@ -2,8 +2,6 @@ package com.delivery_track.api.controllers;
 
 import com.delivery_track.api.dtos.FinishDeliveryDto;
 import com.delivery_track.api.dtos.InitiDeliveryDto;
-import com.delivery_track.api.dtos.LocationDto;
-import com.delivery_track.api.models.Delivery;
 import com.delivery_track.api.repositories.DeliveryRepository;
 import com.delivery_track.api.services.DeliveryService;
 import io.swagger.v3.oas.annotations.Operation;
