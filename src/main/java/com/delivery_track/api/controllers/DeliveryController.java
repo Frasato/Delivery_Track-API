@@ -1,6 +1,7 @@
 package com.delivery_track.api.controllers;
 
 import com.delivery_track.api.dtos.FinishDeliveryDto;
+import com.delivery_track.api.dtos.InitiDeliveryDto;
 import com.delivery_track.api.dtos.LocationDto;
 import com.delivery_track.api.models.Delivery;
 import com.delivery_track.api.repositories.DeliveryRepository;
@@ -28,7 +29,7 @@ public class DeliveryController {
     @Autowired
     private DeliveryService deliveryService;
 
-    @PostMapping("/init/{id}")
+    @PostMapping("/init")
     @Operation(
             summary = "Init",
             description = "Create a new delivery"
@@ -39,8 +40,8 @@ public class DeliveryController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<?> initDelivery(@PathVariable String id){
-        return deliveryService.initDelivery(id);
+    public ResponseEntity<?> initDelivery(@RequestBody InitiDeliveryDto initiDeliveryDto){
+        return deliveryService.initDelivery(initiDeliveryDto.userId(), initiDeliveryDto.orders());
     }
 
     @PostMapping("/finish")
