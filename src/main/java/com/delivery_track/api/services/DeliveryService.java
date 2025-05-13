@@ -2,8 +2,10 @@ package com.delivery_track.api.services;
 
 import com.delivery_track.api.dtos.ResponseDeliveryDto;
 import com.delivery_track.api.models.Delivery;
+import com.delivery_track.api.models.Finished;
 import com.delivery_track.api.models.User;
 import com.delivery_track.api.repositories.DeliveryRepository;
+import com.delivery_track.api.repositories.FinishedRepository;
 import com.delivery_track.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +26,10 @@ public class DeliveryService {
     private DeliveryRepository deliveryRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private FinishedRepository finishedRepository;
 
-    public ResponseEntity<?> initDelivery(String userId){
+    public ResponseEntity<?> initDelivery(String userId, int orders){
         logger.info("Starting the delivery for user {}", userId);
         try{
             Optional<User> findeduser = userRepository.findById(userId);
@@ -40,6 +44,7 @@ public class DeliveryService {
             delivery.setLng(0);
             delivery.setInit(Instant.now());
             delivery.setUser(findeduser.get());
+            delivery.setOrders(orders);
 
             Delivery savedDelivery = deliveryRepository.save(delivery);
             String link = "https://localhost:8080/api/delivery/track/public/" + savedDelivery.getId();
@@ -61,16 +66,23 @@ public class DeliveryService {
         logger.info("Finishing the delivery {}", deliveryId);
         try{
             Optional<User> findedUser = userRepository.findById(userId);
-            Optional<Delivery> findedDelivery = deliveryRepository.findById(deliveryId);
+            Optional<Delivery> openedDelivery = deliveryRepository.findById(deliveryId);
 
-            if(findedDelivery.isEmpty() || findedUser.isEmpty()){
+            if(openedDelivery.isEmpty() || findedUser.isEmpty()){
                 logger.warn("User {} and Delivery {} not found", userId, deliveryId);
                 return ResponseEntity.status(400).body("ERROR: Delivery or User doesn't exist!");
             }
 
-            Delivery delivery = findedDelivery.get();
-            delivery.setFinish(Instant.now());
-            deliveryRepository.save(delivery);
+            Delivery delivery = openedDelivery.get();
+
+            Finished finishedDelivery = new Finished();
+            finishedDelivery.setStartTime(delivery.getInit().toString());
+            finishedDelivery.setName(findedUser.get().getName());
+            finishedDelivery.setFinishTime(Instant.now());
+            finishedDelivery.setOrder(delivery.getOrders());
+
+            deliveryRepository.delete(delivery);
+            finishedRepository.save(finishedDelivery);
 
             logger.info("Delivery {} finished", deliveryId);
 
